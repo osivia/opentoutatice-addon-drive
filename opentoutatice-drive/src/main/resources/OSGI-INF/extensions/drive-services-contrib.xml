@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.drive.services">
+	<service>
+		<provide interface="fr.toutatice.ecm.drive.services.ToutaticeDriveService" />
+	</service>
+	<implementation	class="fr.toutatice.ecm.drive.services.ToutaticeDriveServiceImpl" />
+</component>

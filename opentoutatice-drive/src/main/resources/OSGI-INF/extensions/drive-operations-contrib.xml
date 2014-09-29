@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.drive.automation" version="1.0">
+
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+    point="operations">
+    
+    <operation class="fr.toutatice.ecm.drive.automation.CheckInDocument" />
+    <operation class="fr.toutatice.ecm.drive.automation.CheckOutDocument" />
+	
+  </extension>
+
+</component>
