@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<nxthemes:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:nxthemes="http://nuxeo.org/nxthemes"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:nxl="http://nuxeo.org/nxforms/layout"
+	xmlns:nxh="http://nuxeo.org/nxweb/html"
+	xmlns:nxd="http://nuxeo.org/nxweb/document"
+	xmlns:nxu="http://nuxeo.org/nxweb/util"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+
+
+	<ui:define name="header_scripts">
+		<script type="text/javascript" src="#{baseURL}/scripts/postmessage.js"></script>			
+	</ui:define>
+
+	<ui:define name="body">
+	
+		<div class="toutatice_edit_top_class">
+			<div class="toutatice_edit_header_class">
+				<h1>
+					<h:outputText value=" " />
+				</h1>
+			</div>
+			<div class="toutatice_edit_form_class">
+				<h:form id="drive_form">
+					<img src="#{baseURL}/img/standart_waiter.gif" /> &nbsp; <h:outputText
+							value="Votre document est en cours d'ouverture. Si rien ne se passe, cliquez sur ce lien : " />
+					
+					<a href="#{driveBean.driveLink}">lien</a>
+				
+				</h:form>
+
+			</div>
+		</div>
+	</ui:define>
+
+</nxthemes:composition> 

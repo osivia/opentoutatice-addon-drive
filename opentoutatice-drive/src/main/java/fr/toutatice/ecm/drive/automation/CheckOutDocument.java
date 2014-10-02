@@ -35,43 +35,8 @@ public class CheckOutDocument {
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel document) throws Exception {
 
-    	// controls
     	ToutaticeDriveService drive = Framework.getService(ToutaticeDriveService.class);
-    	Map<String, String> infos = drive.fetchInfos(session, document);
     	
-    	
-    	if(infos.get("canCheckOut") != null) {
-    		
-    		UserWorkspaceService userWorkspaceService = Framework.getService(UserWorkspaceService.class);
-    		
-    		DocumentModel personalWorkspace = userWorkspaceService.getCurrentUserPersonalWorkspace(session, document);
-    		String mySyncDocumentsStr = personalWorkspace.getPathAsString();
-    		
-    		mySyncDocumentsStr += "/porte-document";
-    		
-    		PathRef path = new PathRef(mySyncDocumentsStr);
-    		DocumentModel mySyncDocuments = session.getDocument(path);
-    		
-    		if(mySyncDocuments != null) {
-    			DocumentModel copied = session.copy(document.getRef(), mySyncDocuments.getRef(), null);
-    			
-    			copied.addFacet("CheckedOutDocument");
-    			copied.setProperty("toutatice_drive", "docRef", document.getRef().toString());
-    			session.saveDocument(copied);
-    			
-    		}
-    		else {
-        		throw new OperationException("No porte-document found");
-        	}
-			
-    	}
-    	else {
-    		throw new OperationException("This file is not able to be checked out");
-    	}
-    	
-    	// 
-    	
-    	
-    	return null;
+    	return drive.checkOut(session, document);
     }
 }

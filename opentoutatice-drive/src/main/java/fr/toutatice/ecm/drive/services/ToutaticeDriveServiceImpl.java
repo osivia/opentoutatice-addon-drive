@@ -12,6 +12,7 @@ import org.nuxeo.drive.adapter.FileSystemItem;
 import org.nuxeo.drive.adapter.RootlessItemException;
 import org.nuxeo.drive.service.FileSystemItemAdapterService;
 import org.nuxeo.drive.service.NuxeoDriveManager;
+import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -28,8 +29,7 @@ import org.nuxeo.runtime.api.Framework;
 
 public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
-
-    private static final Log log = LogFactory.getLog(ToutaticeDriveServiceImpl.class);
+	private static final Log log = LogFactory.getLog(ToutaticeDriveServiceImpl.class);
 
     protected static final String IS_UNDER_SYNCHRONIZATION_ROOT = "nuxeoDriveIsUnderSynchronizationRoot";
 
@@ -48,30 +48,30 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         Map<String, String> synchronizationInfos = new TreeMap<String, String>();
 
         if (canSynchronizeCurrentDocument(coreSession, currentDocument)) {
-            synchronizationInfos.put("canSynchronize", "true");
+            synchronizationInfos.put(DriveConstants.CAN_SYNCHRONIZE, "true");
         } else if (canUnSynchronizeCurrentDocument(coreSession, currentDocument)) {
-            synchronizationInfos.put("canUnsynchronize", "true");
+            synchronizationInfos.put(DriveConstants.CAN_UNSYNCHRONIZE, "true");
         } else if (canNavigateToCurrentSynchronizationRoot(coreSession, currentDocument)) {
 
-            synchronizationInfos.put("canNavigateToCurrentSynchronizationRoot", "true");
-            synchronizationInfos.put("synchronizationRootPath", getCurrentSynchronizationRoot(coreSession, currentDocument).getPathAsString());
+            synchronizationInfos.put(DriveConstants.CAN_NAVIGATE_TO_CURRENT_SYNCHRONIZATION_ROOT, "true");
+            synchronizationInfos.put(DriveConstants.SYNCHRONIZATION_ROOT_PATH, getCurrentSynchronizationRoot(coreSession, currentDocument).getPathAsString());
 
             if (canEditCurrentDocument(coreSession, currentDocument)) {
 
-                synchronizationInfos.put("canEditCurrentDocument", "true");
-                synchronizationInfos.put("driveEditURL", getDriveEditURL(coreSession, currentDocument));
+                synchronizationInfos.put(DriveConstants.CAN_EDIT_CURRENT_DOCUMENT, "true");
+                synchronizationInfos.put(DriveConstants.DRIVE_EDIT_URL, getDriveEditURL(coreSession, currentDocument));
             }
         } 
         else {
         	DocumentModel openableDocument = getOpenableDocument(coreSession, currentDocument);
         	
         	if(openableDocument != null) {
-        		synchronizationInfos.put("canEditCurrentDocument", "true");
-        		synchronizationInfos.put("canCheckIn", "true");
-                synchronizationInfos.put("driveEditURL", getDriveEditURL(coreSession, openableDocument));
+        		synchronizationInfos.put(DriveConstants.CAN_EDIT_CURRENT_DOCUMENT, "true");
+        		synchronizationInfos.put(DriveConstants.CAN_CHECK_IN, "true");
+                synchronizationInfos.put(DriveConstants.DRIVE_EDIT_URL, getDriveEditURL(coreSession, openableDocument));
         	}
         	else if(canCheckOutCurrentDocument(coreSession, currentDocument)) {
-            	synchronizationInfos.put("canCheckOut", "true");
+            	synchronizationInfos.put(DriveConstants.CAN_CHECK_OUT, "true");
             }
         }
         
@@ -391,5 +391,87 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         // }
         return currentFileSystemItem;
     }
+
+	@Override
+	public DocumentModel checkOut(CoreSession coreSession,
+			DocumentModel currentDocument) throws ClientException {
+		
+    	Map<String, String> infos = fetchInfos(coreSession, currentDocument);
+    	
+    	
+    	if(infos.get(DriveConstants.CAN_CHECK_OUT) != null) {
+    		
+    		UserWorkspaceService userWorkspaceService = null;
+			try {
+				userWorkspaceService = Framework.getService(UserWorkspaceService.class);
+			} catch (Exception e) {
+				throw new ClientException(e);
+			}
+    		
+    		DocumentModel personalWorkspace = userWorkspaceService.getCurrentUserPersonalWorkspace(coreSession, currentDocument);
+    		String mySyncDocumentsStr = personalWorkspace.getPathAsString();
+    		
+    		mySyncDocumentsStr += "/porte-document";
+    		
+    		PathRef path = new PathRef(mySyncDocumentsStr);
+    		DocumentModel mySyncDocuments = coreSession.getDocument(path);
+    		
+    		if(mySyncDocuments != null) {
+    			DocumentModel copied = coreSession.copy(currentDocument.getRef(), mySyncDocuments.getRef(), null);
+    			
+    			copied.addFacet("CheckedOutDocument");
+    			copied.setProperty("toutatice_drive", "docRef", currentDocument.getRef().toString());
+    			coreSession.saveDocument(copied);
+    			
+    		}
+    		else {
+        		throw new ClientException("No porte-document found");
+        	}
+			
+    	}
+    	else {
+    		throw new ClientException("This file is not able to be checked out");
+    	}
+    	
+    	// 
+    	
+    	
+    	return null;
+	}
+
+
+    
+	@Override
+	public DocumentModel checkIn(CoreSession coreSession,
+			DocumentModel currentDocument, boolean keepLocalCopy) throws ClientException {
+
+    	
+    	DocumentModel documentInUserWks = getOpenableDocument(coreSession, currentDocument);
+    	DocumentModel copied = null;
+    	
+    	if(documentInUserWks != null) {
+    		DocumentRef parentRef = currentDocument.getParentRef();
+    		
+    		coreSession.removeDocument(currentDocument.getRef());
+    		
+    		if(keepLocalCopy) {
+    			copied = coreSession.copy(documentInUserWks.getRef(), parentRef, null);
+    		}
+    		else {
+    			copied = coreSession.move(documentInUserWks.getRef(), parentRef, null);
+    		}
+    		
+    		copied.setProperty("toutatice_drive", "docRef", null);
+    		copied.removeFacet("CheckedOutDocument");
+    		coreSession.saveDocument(copied);
+    	}
+    	else {
+    		throw new ClientException("This file is not able to be checked in");
+    	}
+    	
+    	
+    	return copied;
+		
+	}
 
 }

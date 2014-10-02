@@ -38,33 +38,8 @@ public class CheckInDocument {
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel document) throws Exception {
 
-    	// controls
     	ToutaticeDriveService drive = Framework.getService(ToutaticeDriveService.class);
     	
-    	DocumentModel documentInUserWks = drive.getOpenableDocument(session, document);
-    	DocumentModel copied = null;
-    	
-    	if(documentInUserWks != null) {
-    		DocumentRef parentRef = document.getParentRef();
-    		
-    		session.removeDocument(document.getRef());
-    		
-    		if(keepLocalCopy) {
-    			copied = session.copy(documentInUserWks.getRef(), parentRef, null);
-    		}
-    		else {
-    			copied = session.move(documentInUserWks.getRef(), parentRef, null);
-    		}
-    		
-    		copied.setProperty("toutatice_drive", "docRef", null);
-    		copied.removeFacet("CheckedOutDocument");
-    		session.saveDocument(copied);
-    	}
-    	else {
-    		throw new OperationException("This file is not able to be checked in");
-    	}
-    	
-    	
-    	return copied;
+    	return drive.checkIn(session, document, keepLocalCopy);
     }
 }
