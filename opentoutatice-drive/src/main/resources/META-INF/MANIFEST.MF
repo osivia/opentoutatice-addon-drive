@@ -11,5 +11,5 @@ Nuxeo-Component: OSGI-INF/extensions/drive-fetchinfos-contrib.xml,
  OSGI-INF/extensions/drive-schemas-contrib.xml,
  OSGI-INF/extensions/drive-services-contrib.xml,
  OSGI-INF/extensions/drive-theme-contrib.xml,
- OSGI-INF/extensions/drive-types-contrib.xml,
+ OSGI-INF/extensions/drive-types-contrib.xml
  

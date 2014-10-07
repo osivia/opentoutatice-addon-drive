@@ -2,6 +2,8 @@
 
 <fragment version="1">
 
+	<require>fr.toutatice.ecm.platform.services</require>
+
 	<extension target="application#MODULE">
 		<module>
 			<java>${bundle.fileName}</java>
@@ -16,7 +18,9 @@
 		</navigation-case>
 		
 	</extension>
- 
+	
+	<extension target="pages#PAGES">
+	</extension>
 	 
 	<install>
 		<unzip from="${bundle.fileName}" to="/">
@@ -24,7 +28,7 @@
 		</unzip>
 
 		<!-- append l10n files -->
-		<delete path="${bundle.fileName}.tmp" />
+		<!-- <delete path="${bundle.fileName}.tmp" />
 		<mkdir path="${bundle.fileName}.tmp" />
 
 		<unzip from="${bundle.fileName}" to="${bundle.fileName}.tmp">
@@ -32,8 +36,8 @@
 		</unzip>
 
 		<append from="${bundle.fileName}.tmp/OSGI-INF/l10n/messages_fr.properties"
-			to="nuxeo.war/WEB-INF/classes/messages_fr.properties" addNewLine="true" />
+			to="nuxeo.war/WEB-INF/classes/messages_fr.properties" addNewLine="true" /> 
 
-		<delete path="${bundle.fileName}.tmp" />
+		<delete path="${bundle.fileName}.tmp" /> -->
 	</install>	
 </fragment>
