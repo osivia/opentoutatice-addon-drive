@@ -18,8 +18,9 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.runtime.api.Framework;
+import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import fr.toutatice.ecm.drive.services.DriveConstants;
+import fr.toutatice.ecm.drive.DriveConstants;
 import fr.toutatice.ecm.drive.services.ToutaticeDriveService;
 
 
@@ -44,32 +45,35 @@ public class ToutaticeDriveBean implements Serializable {
 	
 	public String getDriveLink() throws ClientException {
 
-		DocumentModel document = navigationContext.getCurrentDocument();
-		
-    	ToutaticeDriveService drive;
-		try {
-			drive = Framework.getService(ToutaticeDriveService.class);
-		} catch (Exception e) {
-			throw new ClientException(e);
+		if(driveLink == null) {
+			DocumentModel document = navigationContext.getCurrentDocument();
+			
+	    	ToutaticeDriveService drive;
+			try {
+				drive = Framework.getService(ToutaticeDriveService.class);
+			} catch (Exception e) {
+				throw new ClientException(e);
+			}
+	    	Map<String, String> fetchInfos = drive.fetchInfos(documentManager, document);
+	    	
+	    	driveLink = fetchInfos.get(DriveConstants.DRIVE_EDIT_URL);
+	    	
+	    	if(driveLink == null) {
+	    		
+	    		String canCheckOut = fetchInfos.get(DriveConstants.CAN_CHECK_OUT);
+	    		
+	    		if(canCheckOut != null) {
+	    			drive.checkOut(documentManager, document);
+	    			TransactionHelper.commitOrRollbackTransaction();
+	    			
+	    			fetchInfos = drive.fetchInfos(documentManager, document);
+	    			driveLink = fetchInfos.get(DriveConstants.DRIVE_EDIT_URL);
+	    			
+	    		}
+	    	}
+    	
 		}
-    	Map<String, String> fetchInfos = drive.fetchInfos(documentManager, document);
-    	
-    	String driveUrl = fetchInfos.get(DriveConstants.DRIVE_EDIT_URL);
-    	
-    	if(driveUrl == null) {
-    		
-    		String canCheckOut = fetchInfos.get(DriveConstants.CAN_CHECK_OUT);
-    		
-    		if(canCheckOut != null) {
-    			drive.checkOut(documentManager, document);
-    			fetchInfos = drive.fetchInfos(documentManager, document);
-    			driveUrl = fetchInfos.get(DriveConstants.DRIVE_EDIT_URL);
-    			
-    		}
-    	}
-    	
-    	
-    	return driveUrl;
+    	return driveLink;
 			
 
 	}

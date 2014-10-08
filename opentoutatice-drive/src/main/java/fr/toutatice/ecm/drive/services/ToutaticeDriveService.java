@@ -9,14 +9,12 @@ import fr.toutatice.ecm.platform.core.services.fetchinformation.FetchInformation
 
 
 public interface ToutaticeDriveService extends FetchInformationProvider {
-
+	
 	DocumentModel getOpenableDocument(CoreSession coreSession,
 			DocumentModel currentDocument) throws ClientException;
 
 	DocumentModel checkOut(CoreSession coreSession,
 			DocumentModel currentDocument) throws ClientException;
 
-	DocumentModel checkIn(CoreSession coreSession,
-			DocumentModel currentDocument, boolean keepLocalCopy) throws ClientException;
 
 }

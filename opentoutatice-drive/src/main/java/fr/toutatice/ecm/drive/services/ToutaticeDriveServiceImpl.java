@@ -12,7 +12,6 @@ import org.nuxeo.drive.adapter.FileSystemItem;
 import org.nuxeo.drive.adapter.RootlessItemException;
 import org.nuxeo.drive.service.FileSystemItemAdapterService;
 import org.nuxeo.drive.service.NuxeoDriveManager;
-import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -26,10 +25,12 @@ import org.nuxeo.ecm.core.api.security.SecurityConstants;
 import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
 
+import fr.toutatice.ecm.drive.DriveConstants;
+
 
 public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
-	private static final Log log = LogFactory.getLog(ToutaticeDriveServiceImpl.class);
+	private static final Log log = LogFactory.getLog("Drive");
 
     protected static final String IS_UNDER_SYNCHRONIZATION_ROOT = "nuxeoDriveIsUnderSynchronizationRoot";
 
@@ -44,7 +45,8 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
 
 
-    public Map<String, String> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    @Override
+	public Map<String, String> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
         Map<String, String> synchronizationInfos = new TreeMap<String, String>();
 
         if (canSynchronizeCurrentDocument(coreSession, currentDocument)) {
@@ -76,7 +78,7 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         }
         
 
-        log.warn("[drive] " + currentDocument.getPathAsString() + 
+        log.warn(currentDocument.getPathAsString() + 
         		" (" + currentDocument.getId() + ") " + synchronizationInfos);
 
         return synchronizationInfos;
@@ -204,7 +206,8 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
             + " AND ecm:parentId = '%s'";
     
     
-    public DocumentModel getOpenableDocument(CoreSession coreSession,
+    @Override
+	public DocumentModel getOpenableDocument(CoreSession coreSession,
 			DocumentModel currentDocument) throws ClientException {
     	
     	UserWorkspaceService userWorkspaceService;
@@ -419,8 +422,9 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
     		if(mySyncDocuments != null) {
     			DocumentModel copied = coreSession.copy(currentDocument.getRef(), mySyncDocuments.getRef(), null);
     			
-    			copied.addFacet("CheckedOutDocument");
-    			copied.setProperty("toutatice_drive", "docRef", currentDocument.getRef().toString());
+				copied.addFacet(DriveConstants.FACET_CHECKED_OUT_DOC);
+				copied.setPropertyValue(DriveConstants.PROPERTY_DOC_REF,
+						currentDocument.getRef().toString());
     			coreSession.saveDocument(copied);
     			
     		}
@@ -441,37 +445,39 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
 
     
-	@Override
-	public DocumentModel checkIn(CoreSession coreSession,
-			DocumentModel currentDocument, boolean keepLocalCopy) throws ClientException {
-
-    	
-    	DocumentModel documentInUserWks = getOpenableDocument(coreSession, currentDocument);
-    	DocumentModel copied = null;
-    	
-    	if(documentInUserWks != null) {
-    		DocumentRef parentRef = currentDocument.getParentRef();
-    		
-    		coreSession.removeDocument(currentDocument.getRef());
-    		
-    		if(keepLocalCopy) {
-    			copied = coreSession.copy(documentInUserWks.getRef(), parentRef, null);
-    		}
-    		else {
-    			copied = coreSession.move(documentInUserWks.getRef(), parentRef, null);
-    		}
-    		
-    		copied.setProperty("toutatice_drive", "docRef", null);
-    		copied.removeFacet("CheckedOutDocument");
-    		coreSession.saveDocument(copied);
-    	}
-    	else {
-    		throw new ClientException("This file is not able to be checked in");
-    	}
-    	
-    	
-    	return copied;
-		
-	}
+	// @Override
+	// public DocumentModel checkIn(CoreSession coreSession,
+	// DocumentModel currentDocument, boolean keepLocalCopy) throws
+	// ClientException {
+	//
+	//
+	// DocumentModel documentInUserWks = getOpenableDocument(coreSession,
+	// currentDocument);
+	// DocumentModel copied = null;
+	//
+	// if(documentInUserWks != null) {
+	// DocumentRef parentRef = currentDocument.getParentRef();
+	//
+	// coreSession.removeDocument(currentDocument.getRef());
+	//
+	// if(keepLocalCopy) {
+	// copied = coreSession.copy(documentInUserWks.getRef(), parentRef, null);
+	// }
+	// else {
+	// copied = coreSession.move(documentInUserWks.getRef(), parentRef, null);
+	// }
+	//
+	// copied.setPropertyValue(PROPERTY_DOC_REF, null);
+	// copied.removeFacet(FACET_CHECKED_OUT_DOC);
+	// coreSession.saveDocument(copied);
+	// }
+	// else {
+	// throw new ClientException("This file is not able to be checked in");
+	// }
+	//
+	//
+	// return copied;
+	//
+	// }
 
 }

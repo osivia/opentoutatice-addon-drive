@@ -11,14 +11,25 @@
 	xmlns:nxd="http://nuxeo.org/nxweb/document"
 	xmlns:nxu="http://nuxeo.org/nxweb/util"
 	xmlns:c="http://java.sun.com/jstl/core">
-	
 
 
 	<ui:define name="header_scripts">
-		<script type="text/javascript" src="#{baseURL}/scripts/postmessage.js"></script>			
+		<script type="text/javascript" src="#{baseURL}/scripts/postmessage.js"></script>
+		<script type="text/javascript">
+		<!--
+			function startDownload () { 
+				document.getElementById("download_frame").src="#{driveBean.driveLink}"; 
+				}
+		
+			setTimeout (startDownload, 5000);
+		-->
+		</script>
 	</ui:define>
 
 	<ui:define name="body">
+
+	
+		<iframe width="1" height="1" frameborder="0" id="download_frame"></iframe>
 	
 		<div class="toutatice_edit_top_class">
 			<div class="toutatice_edit_header_class">
