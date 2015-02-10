@@ -1,3 +1,21 @@
+/*
+ * (C) Copyright 2014 Académie de Rennes (http://www.ac-rennes.fr/), OSIVIA (http://www.osivia.com) and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ *
+ * Contributors:
+ *   lbillon
+ *    
+ */
 package fr.toutatice.ecm.drive.services;
 
 import java.util.Collections;
@@ -8,10 +26,12 @@ import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.drive.adapter.FileSystemItem;
 import org.nuxeo.drive.adapter.RootlessItemException;
 import org.nuxeo.drive.service.FileSystemItemAdapterService;
 import org.nuxeo.drive.service.NuxeoDriveManager;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -19,15 +39,16 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.LifeCycleConstants;
-import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
-import org.nuxeo.ecm.platform.userworkspace.api.UserWorkspaceService;
 import org.nuxeo.runtime.api.Framework;
 
-import fr.toutatice.ecm.drive.DriveConstants;
-
-
+/**
+ * impl of ToutaticeDriveService
+ * @author lbillon
+ *
+ */
 public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
 	private static final Log log = LogFactory.getLog("Drive");
@@ -40,47 +61,29 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
     public static final String PROTOCOL_COMMAND_EDIT = "edit";
 
-    // protected FileSystemItem currentFileSystemItem;
-
-
-
 
     @Override
 	public Map<String, String> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
         Map<String, String> synchronizationInfos = new TreeMap<String, String>();
 
         if (canSynchronizeCurrentDocument(coreSession, currentDocument)) {
-            synchronizationInfos.put(DriveConstants.CAN_SYNCHRONIZE, "true");
+            synchronizationInfos.put(CAN_SYNCHRONIZE, "true");
         } else if (canUnSynchronizeCurrentDocument(coreSession, currentDocument)) {
-            synchronizationInfos.put(DriveConstants.CAN_UNSYNCHRONIZE, "true");
+            synchronizationInfos.put(CAN_UNSYNCHRONIZE, "true");
         } else if (canNavigateToCurrentSynchronizationRoot(coreSession, currentDocument)) {
 
-            synchronizationInfos.put(DriveConstants.CAN_NAVIGATE_TO_CURRENT_SYNCHRONIZATION_ROOT, "true");
-            synchronizationInfos.put(DriveConstants.SYNCHRONIZATION_ROOT_PATH, getCurrentSynchronizationRoot(coreSession, currentDocument).getPathAsString());
+            synchronizationInfos.put(CAN_NAVIGATE_TO_CURRENT_SYNCHRONIZATION_ROOT, "true");
+            synchronizationInfos.put(SYNCHRONIZATION_ROOT_PATH, getCurrentSynchronizationRoot(coreSession, currentDocument).getPathAsString());
 
-            if (canEditCurrentDocument(coreSession, currentDocument)) {
 
-                synchronizationInfos.put(DriveConstants.CAN_EDIT_CURRENT_DOCUMENT, "true");
-                synchronizationInfos.put(DriveConstants.DRIVE_EDIT_URL, getDriveEditURL(coreSession, currentDocument));
-            }
         } 
-        else {
-        	DocumentModel openableDocument = getOpenableDocument(coreSession, currentDocument);
-        	
-        	if(openableDocument != null) {
-        		synchronizationInfos.put(DriveConstants.CAN_EDIT_CURRENT_DOCUMENT, "true");
-        		synchronizationInfos.put(DriveConstants.CAN_CHECK_IN, "true");
-                synchronizationInfos.put(DriveConstants.DRIVE_EDIT_URL, getDriveEditURL(coreSession, openableDocument));
-        	}
-        	else if(canCheckOutCurrentDocument(coreSession, currentDocument)) {
-            	synchronizationInfos.put(DriveConstants.CAN_CHECK_OUT, "true");
-            }
-        }
+
+		if (canEditCurrentDocument(coreSession, currentDocument)) {
+
+			synchronizationInfos.put(CAN_EDIT_CURRENT_DOCUMENT, "true");
+			synchronizationInfos.put(DRIVE_EDIT_URL, getDriveEditURL(coreSession, currentDocument));
+		}
         
-
-        log.warn(currentDocument.getPathAsString() + 
-        		" (" + currentDocument.getId() + ") " + synchronizationInfos);
-
         return synchronizationInfos;
     }
 
@@ -116,16 +119,14 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
     }
 
     public boolean canEditCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
-        // DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
         if (currentDocument == null) {
             return false;
         }
         if (currentDocument.isFolder()) {
             return false;
         }
-        if (getCurrentSynchronizationRoot(coreSession, currentDocument) == null) {
-            return false;
-        }
+
         // Check if current document can be adapted as a FileSystemItem
         return getCurrentFileSystemItem(coreSession, currentDocument) != null;
     }
@@ -149,21 +150,37 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
                     currentDocument.getId(), currentDocument.getPathAsString()));
         }
 
+        
+        
+        BlobHolder bh = currentDocument.getAdapter(BlobHolder.class);
+        if (bh == null) {
+            throw new ClientException(String.format("Document %s (%s) is not a BlobHolder, cannot get Drive Edit URL.",
+                    currentDocument.getPathAsString(), currentDocument.getId()));
+        }
+        Blob blob = bh.getBlob();
+        if (blob == null) {
+            throw new ClientException(String.format("Document %s (%s) has no blob, cannot get Drive Edit URL.",
+                    currentDocument.getPathAsString(), currentDocument.getId()));
+        }
+        String fileName = blob.getFilename();
 
-        String fsItemId = currentFileSystemItem.getId();
-        // ServletRequest servletRequest = (ServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        // String baseURL = VirtualHostHelper.getBaseURL(servletRequest);
         StringBuffer sb = new StringBuffer();
         sb.append(NXDRIVE_PROTOCOL).append("://");
         sb.append(PROTOCOL_COMMAND_EDIT).append("/");
         sb.append(Framework.getProperty("nuxeo.url").replaceFirst("://", "/"));
-        sb.append("/fsitem/");
-        sb.append(fsItemId);
+        sb.append("/repo/");
+        sb.append(coreSession.getRepositoryName());
+        sb.append("/nxdocid/");
+        sb.append(currentDocument.getId());
+        sb.append("/filename/");
+        String escapedFilename = fileName.replaceAll("(/|\\\\|\\*|<|>|\\?|\"|:|\\|)", "-");
+        sb.append(URIUtils.quoteURIPathComponent(escapedFilename, true));
         return sb.toString();
+        
     }
 
     public boolean canSynchronizeCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
-        // DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
         if (currentDocument == null) {
             return false;
         }
@@ -171,7 +188,7 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
     }
 
     public boolean canUnSynchronizeCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
-        // DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
         if (currentDocument == null) {
             return false;
         }
@@ -187,7 +204,7 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
     }
 
     public boolean canNavigateToCurrentSynchronizationRoot(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
-        // DocumentModel currentDocument = navigationContext.getCurrentDocument();
+
         if (currentDocument == null) {
             return false;
         }
@@ -201,163 +218,6 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         }
         return !currentDocRef.equals(currentSyncRoot.getRef());
     }
-    
-    private static final String CHECKED_OUT_QUERY = "select * from Document Where ttcdr:docRef = '%s'"
-            + " AND ecm:parentId = '%s'";
-    
-    
-    @Override
-	public DocumentModel getOpenableDocument(CoreSession coreSession,
-			DocumentModel currentDocument) throws ClientException {
-    	
-    	UserWorkspaceService userWorkspaceService;
-		try {
-			userWorkspaceService = Framework.getService(UserWorkspaceService.class);
-		} catch (Exception e) {
-			return null;
-		}
-
-		DocumentModel personalWorkspace = userWorkspaceService.getCurrentUserPersonalWorkspace(coreSession, currentDocument);
-		String mySyncDocumentsStr = personalWorkspace.getPathAsString();
-		
-		mySyncDocumentsStr += "/porte-document";
-		
-		PathRef path = new PathRef(mySyncDocumentsStr);
-		DocumentModel mySyncDocuments = coreSession.getDocument(path);
-		
-		if(mySyncDocuments == null) {
-			return null;
-		}
-		
-		DocumentModelList alreadyChecked = coreSession.query(String.format(CHECKED_OUT_QUERY,currentDocument.getRef().toString(), mySyncDocuments.getId()));
-		
-		if(alreadyChecked.size() > 0) {
-			return alreadyChecked.get(0);
-		}
-		else {
-			return null;
-		}
-        
-    }
-    
-    private boolean canCheckOutCurrentDocument(CoreSession coreSession,
-			DocumentModel currentDocument) throws ClientException {
-        if (currentDocument == null) {
-            return false;
-        }
-        
-        if (currentDocument.isFolder()) {
-            return false;
-        }
-        
-        	
-		
-		
-        // TODO valider document pas déjà checkout
-		return true;
-	}
-
-    // @Factory(value = "currentDocumentUserWorkspace", scope = ScopeType.PAGE)
-    // public boolean isCurrentDocumentUserWorkspace() throws ClientException {
-    // DocumentModel currentDocument = navigationContext.getCurrentDocument();
-    // if (currentDocument == null) {
-    // return false;
-    // }
-    // return UserWorkspaceHelper.isUserWorkspace(currentDocument);
-    // }
-
-    // public String synchronizeCurrentDocument(DocumentModel newSyncRoot) throws ClientException, SecurityException {
-    // NuxeoDriveManager driveManager = Framework.getLocalService(NuxeoDriveManager.class);
-    // Principal principal = documentManager.getPrincipal();
-    // String userName = principal.getName();
-    // //DocumentModel newSyncRoot = navigationContext.getCurrentDocument();
-    // driveManager.registerSynchronizationRoot(principal, newSyncRoot, documentManager);
-    // TokenAuthenticationService tokenService = Framework.getLocalService(TokenAuthenticationService.class);
-    // boolean hasOneNuxeoDriveToken = false;
-    // for (DocumentModel token : tokenService.getTokenBindings(userName)) {
-    // if ("Nuxeo Drive".equals(token.getPropertyValue("authtoken:applicationName"))) {
-    // hasOneNuxeoDriveToken = true;
-    // break;
-    // }
-    // }
-    // if (hasOneNuxeoDriveToken) {
-    // return null;
-    // } else {
-    // // redirect to user center
-    // userCenterViews.setCurrentViewId("userCenterNuxeoDrive");
-    // return "view_home";
-    // }
-    // }
-
-    // public void unsynchronizeCurrentDocument() throws ClientException {
-    // NuxeoDriveManager driveManager = Framework.getLocalService(NuxeoDriveManager.class);
-    // Principal principal = documentManager.getPrincipal();
-    // DocumentModel syncRoot = navigationContext.getCurrentDocument();
-    // driveManager.unregisterSynchronizationRoot(principal, syncRoot, documentManager);
-    // }
-
-    // public String navigateToCurrentSynchronizationRoot() throws ClientException {
-    // DocumentModel currentRoot = getCurrentSynchronizationRoot();
-    // if (currentRoot == null) {
-    // return "";
-    // }
-    // return navigationContext.navigateToDocument(currentRoot);
-    // }
-
-    // public DocumentModelList getSynchronizationRoots() throws ClientException {
-    // DocumentModelList syncRoots = new DocumentModelListImpl();
-    // NuxeoDriveManager driveManager = Framework.getLocalService(NuxeoDriveManager.class);
-    // Set<IdRef> syncRootRefs = driveManager.getSynchronizationRootReferences(documentManager);
-    // for (IdRef syncRootRef : syncRootRefs) {
-    // syncRoots.add(documentManager.getDocument(syncRootRef));
-    // }
-    // return syncRoots;
-    // }
-
-    // public void unsynchronizeRoot(DocumentModel syncRoot) throws ClientException {
-    // NuxeoDriveManager driveManager = Framework.getLocalService(NuxeoDriveManager.class);
-    // Principal principal = documentManager.getPrincipal();
-    // driveManager.unregisterSynchronizationRoot(principal, syncRoot, documentManager);
-    // }
-
-    // @Factory(value = "nuxeoDriveClientPackages", scope = ScopeType.CONVERSATION)
-    // public List<DesktopPackageDefinition> getClientPackages() {
-    //
-    // List<DesktopPackageDefinition> packages = new ArrayList<DesktopPackageDefinition>();
-    // // Add packages from the client directory
-    // File clientDir = new File(Environment.getDefault().getServerHome(), "client");
-    // if (clientDir.isDirectory()) {
-    // for (File file : clientDir.listFiles()) {
-    // String fileName = file.getName();
-    // boolean isDesktopPackage = false;
-    // String platform = null;
-    // if (fileName.endsWith(".msi")) {
-    // isDesktopPackage = true;
-    // platform = "windows";
-    // } else if (fileName.endsWith(".dmg")) {
-    // isDesktopPackage = true;
-    // platform = "osx";
-    // } else if (fileName.endsWith(".deb")) {
-    // isDesktopPackage = true;
-    // platform = "ubuntu";
-    // }
-    // if (isDesktopPackage) {
-    // packages.add(new DesktopPackageDefinition(file, fileName, platform));
-    // log.debug(String.format("Added %s to the list of desktop packages available for download.", fileName));
-    // }
-    // }
-    // }
-    // // Add external links
-    // // TODO: remove when Debian package is available
-    // packages.add(new DesktopPackageDefinition("https://github.com/nuxeo/nuxeo-drive/#ubuntudebian-and-other-linux-variants-client",
-    // "user.center.nuxeoDrive.platform.ubuntu.docLinkTitle", "ubuntu"));
-    // return packages;
-    // }
-
-    // public String downloadClientPackage(String name, File file) {
-    // FacesContext facesCtx = FacesContext.getCurrentInstance();
-    // return ComponentUtils.downloadFile(facesCtx, name, file);
-    // }
 
     protected boolean isSyncRootCandidate(CoreSession coreSession, DocumentModel doc) throws ClientException {
         if (!doc.isFolder()) {
@@ -395,89 +255,5 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         return currentFileSystemItem;
     }
 
-	@Override
-	public DocumentModel checkOut(CoreSession coreSession,
-			DocumentModel currentDocument) throws ClientException {
-		
-    	Map<String, String> infos = fetchInfos(coreSession, currentDocument);
-    	
-    	
-    	if(infos.get(DriveConstants.CAN_CHECK_OUT) != null) {
-    		
-    		UserWorkspaceService userWorkspaceService = null;
-			try {
-				userWorkspaceService = Framework.getService(UserWorkspaceService.class);
-			} catch (Exception e) {
-				throw new ClientException(e);
-			}
-    		
-    		DocumentModel personalWorkspace = userWorkspaceService.getCurrentUserPersonalWorkspace(coreSession, currentDocument);
-    		String mySyncDocumentsStr = personalWorkspace.getPathAsString();
-    		
-    		mySyncDocumentsStr += "/porte-document";
-    		
-    		PathRef path = new PathRef(mySyncDocumentsStr);
-    		DocumentModel mySyncDocuments = coreSession.getDocument(path);
-    		
-    		if(mySyncDocuments != null) {
-    			DocumentModel copied = coreSession.copy(currentDocument.getRef(), mySyncDocuments.getRef(), null);
-    			
-				copied.addFacet(DriveConstants.FACET_CHECKED_OUT_DOC);
-				copied.setPropertyValue(DriveConstants.PROPERTY_DOC_REF,
-						currentDocument.getRef().toString());
-    			coreSession.saveDocument(copied);
-    			
-    		}
-    		else {
-        		throw new ClientException("No porte-document found");
-        	}
-			
-    	}
-    	else {
-    		throw new ClientException("This file is not able to be checked out");
-    	}
-    	
-    	// 
-    	
-    	
-    	return null;
-	}
-
-
-    
-	// @Override
-	// public DocumentModel checkIn(CoreSession coreSession,
-	// DocumentModel currentDocument, boolean keepLocalCopy) throws
-	// ClientException {
-	//
-	//
-	// DocumentModel documentInUserWks = getOpenableDocument(coreSession,
-	// currentDocument);
-	// DocumentModel copied = null;
-	//
-	// if(documentInUserWks != null) {
-	// DocumentRef parentRef = currentDocument.getParentRef();
-	//
-	// coreSession.removeDocument(currentDocument.getRef());
-	//
-	// if(keepLocalCopy) {
-	// copied = coreSession.copy(documentInUserWks.getRef(), parentRef, null);
-	// }
-	// else {
-	// copied = coreSession.move(documentInUserWks.getRef(), parentRef, null);
-	// }
-	//
-	// copied.setPropertyValue(PROPERTY_DOC_REF, null);
-	// copied.removeFacet(FACET_CHECKED_OUT_DOC);
-	// coreSession.saveDocument(copied);
-	// }
-	// else {
-	// throw new ClientException("This file is not able to be checked in");
-	// }
-	//
-	//
-	// return copied;
-	//
-	// }
 
 }

@@ -3,12 +3,12 @@
 	
 	<groupId>opentoutatice-ecm.drive</groupId>
 	<artifactId>opentoutatice-ecm-drive</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Drive for openToutatice</name>
 
     <properties>
-        <nuxeo.version>5.8.0-HF19</nuxeo.version>
+        <nuxeo.version>6.0-HF03</nuxeo.version>
     </properties>
 
 
@@ -61,7 +61,7 @@
 		<dependency>
 		   <groupId>opentoutatice-ecm.platform</groupId>
 		   <artifactId>opentoutatice-ecm-platform-core</artifactId>
-		   <version>2.0.0-SNAPSHOT</version>
+		   <version>3.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Drive -->
@@ -75,6 +75,13 @@
             <artifactId>nuxeo-drive-operations</artifactId>
             <version>${nuxeo.version}</version>
         </dependency>
+        <!-- 
+        <dependency>
+            <groupId>org.nuxeo.ecm</groupId>
+            <artifactId>nuxeo-drive-jsf</artifactId>
+            <version>${nuxeo.version}</version>
+        </dependency>
+         -->        
 	</dependencies>
 	
 	<profiles>
@@ -93,7 +100,7 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<copy file="${basedir}/target/${project.build.finalName}.jar" todir="${build.toutatice.ecm.modules.dir}/2.0.0" />
+										<copy file="${basedir}/target/${project.build.finalName}.jar" todir="${build.toutatice.ecm.modules.dir}" />
 									</tasks>
 								</configuration>
 								<phase>package</phase>
