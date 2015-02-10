@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>opentoutatice-ecm.drive</groupId>
-	<artifactId>opentoutatice-ecm-drive</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<parent>
+		<groupId>opentoutatice-ecm.drive</groupId>
+		<artifactId>opentoutatice-ecm.drive-parent</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>opentoutatice-drive</artifactId>
 	<packaging>jar</packaging>
 	<name>Drive for openToutatice</name>
-
-    <properties>
-        <nuxeo.version>6.0-HF03</nuxeo.version>
-    </properties>
 
 
     <build>
@@ -24,19 +24,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-            <!-- 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.2.1</version>
-                <configuration>
-                    <tagBase>http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice/tags</tagBase>
-                    <releaseProfiles>unpack,pack</releaseProfiles>
-                    <preparationGoals>clean install</preparationGoals>
-                    <goals>deploy</goals>
-                </configuration>
-            </plugin>
-            -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -61,7 +49,7 @@
 		<dependency>
 		   <groupId>opentoutatice-ecm.platform</groupId>
 		   <artifactId>opentoutatice-ecm-platform-core</artifactId>
-		   <version>3.0.0-SNAPSHOT</version>
+		   <version>${nuxeo.opentoutatice.version}</version>
 		</dependency>
 
 		<!-- Drive -->
