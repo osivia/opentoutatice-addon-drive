@@ -63,8 +63,8 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
 
 
     @Override
-	public Map<String, String> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
-        Map<String, String> synchronizationInfos = new TreeMap<String, String>();
+	public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+        Map<String, Object> synchronizationInfos = new TreeMap<String, Object>();
 
         if (canSynchronizeCurrentDocument(coreSession, currentDocument)) {
             synchronizationInfos.put(CAN_SYNCHRONIZE, "true");
