@@ -126,6 +126,10 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         if (currentDocument.isFolder()) {
             return false;
         }
+        if (!coreSession.hasPermission(currentDocument.getRef(),
+                SecurityConstants.WRITE)) {
+            return false;
+        }
 
         // Check if current document can be adapted as a FileSystemItem
         return getCurrentFileSystemItem(coreSession, currentDocument) != null;
@@ -242,7 +246,7 @@ public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
         FileSystemItem currentFileSystemItem = null;
 
             try {
-                currentFileSystemItem = Framework.getLocalService(FileSystemItemAdapterService.class).getFileSystemItem(currentDocument);
+                currentFileSystemItem = Framework.getLocalService(FileSystemItemAdapterService.class).getFileSystemItem(currentDocument, null);
             } catch (RootlessItemException e) {
                 log.debug(String.format("RootlessItemException thrown while trying to adapt document %s (%s) as a FileSystemItem.", currentDocument.getId(),
                         currentDocument.getPathAsString()));
