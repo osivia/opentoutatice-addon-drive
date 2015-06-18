@@ -12,7 +12,7 @@
 
 	<properties>
 		<nuxeo.version>6.0</nuxeo.version>
-		<nuxeo.opentoutatice.version>3.0.0-SNAPSHOT</nuxeo.opentoutatice.version>
+		<nuxeo.opentoutatice.version>3.1.0</nuxeo.opentoutatice.version>
 	</properties>
 
 	<modules>
