@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.drive.listeners" version="1.0.0">
+
+	<require>org.nuxeo.drive.listeners</require>
+
+	<extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+		point="listener">
+
+		<listener name="nuxeoDriveFileSystemDeletionListener" async="false"
+			postCommit="false"
+			class="org.nuxeo.drive.listener.NuxeoDriveFileSystemDeletionListener"
+			priority="200">
+			<event>beforeDocumentModification</event>
+			<event>aboutToMove</event>
+			<event>lifecycle_transition_event</event>
+			<event>aboutToRemove</event>
+			<event>beforeDocumentSecurityModification</event>
+			<event>beforeRemovedFromCollection</event>
+		</listener>
+
+	</extension>
+	
+</component>
