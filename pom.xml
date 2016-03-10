@@ -8,11 +8,11 @@
 	<packaging>pom</packaging>
 	<description>Addon to enable drive edition and synchronization through portal</description>
 	<name>opentoutatice-ecm.drive-parent</name>
-	<version>3.1.0</version>
+	<version>3.1.1-SNAPSHOT</version>
 
 	<properties>
-		<nuxeo.version>6.0</nuxeo.version>
-		<nuxeo.opentoutatice.version>3.1.0</nuxeo.opentoutatice.version>
+		<nuxeo.version>6.0-HF15</nuxeo.version>
+		<nuxeo.opentoutatice.version>3.1.4</nuxeo.opentoutatice.version>
 	</properties>
 
 	<modules>
