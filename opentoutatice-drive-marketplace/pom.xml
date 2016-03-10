@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>opentoutatice-ecm.drive</groupId>
 		<artifactId>opentoutatice-ecm.drive-parent</artifactId>
-		<version>3.1.1-SNAPSHOT</version>
+		<version>3.1.1</version>
 	</parent>
 	
 
