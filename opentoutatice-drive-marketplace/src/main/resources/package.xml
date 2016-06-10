@@ -2,7 +2,14 @@
 <package type="addon" name="open-toutatice-drive" version="@VERSION@">
 	<title>openToutatice Drive</title>
 	<description>
-		<p>Addon to add drive synchronization and live edit by the portal</p>
+		<p>Addon to add drive synchronization and live edit by the portal.
+		
+		_________________________________________________________________
+		
+		Main Fixes:
+		* Synchronizations informations given to Portal without cache.
+		* Last contributor of space is not updated to current user anymore when this one synchronize the space.
+		</p>
 	</description>
 	<home-page>http://www.toutatice.fr</home-page>
 	<vendor>Academie de Rennes</vendor>
@@ -18,7 +25,7 @@
 	</platforms>
 	<dependencies>
 		<!-- Dependance sur la plate-forme opentoutatice -->
-		<package>open-toutatice:3.2.0-RC08</package>
+		<package>open-toutatice:3.2.0:3.2.2</package>
 		<!-- Dépendance sur d'autres addons  -->
 		<package>nuxeo-drive:1.4.4:1.4.4</package>
 	</dependencies>
