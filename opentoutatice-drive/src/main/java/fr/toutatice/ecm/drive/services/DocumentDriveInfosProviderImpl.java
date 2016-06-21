@@ -49,7 +49,7 @@ import org.nuxeo.runtime.api.Framework;
  * @author lbillon
  *
  */
-public class ToutaticeDriveServiceImpl implements ToutaticeDriveService {
+public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvider {
 
 	private static final Log log = LogFactory.getLog("Drive");
 

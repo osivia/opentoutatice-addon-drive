@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
-<component name="fr.toutatice.ecm.drive.fetchinfos" version="1.0">
+<component name="fr.toutatice.ecm.drive.infos.provider" version="1.0">
 
-	<require>fr.toutatice.ecm.drive.services</require>
-	<require>fr.toutatice.ecm.platform.core.services.fetchinformation</require>
+	<require>fr.toutatice.ecm.platform.core.services.infos.provider</require>
 	
-
-	<extension target="fr.toutatice.ecm.platform.core.services.fetchinformation"
+	<extension target="fr.toutatice.ecm.platform.core.services.infos.provider"
     	point="extended_fetch_infos">
-    
-    	<fetchInfos providerService="fr.toutatice.ecm.drive.services.ToutaticeDriveService" />
+    	
+    	<fetchInfos name="driveInfosProvider" class="fr.toutatice.ecm.drive.services.DocumentDriveInfosProviderImpl" />
+    	
     </extension>
 </component>

@@ -19,7 +19,7 @@
 package fr.toutatice.ecm.drive.services;
 
 
-import fr.toutatice.ecm.platform.core.services.fetchinformation.FetchInformationProvider;
+import fr.toutatice.ecm.platform.core.services.infos.provider.DocumentInformationsProvider;
 
 
 /**
@@ -27,7 +27,7 @@ import fr.toutatice.ecm.platform.core.services.fetchinformation.FetchInformation
  * @author lbillon
  *
  */
-public interface ToutaticeDriveService extends FetchInformationProvider {
+public interface DocumentDriveInfosProvider extends DocumentInformationsProvider {
 
 	// entries added to fetchpublicationinfos
 	
