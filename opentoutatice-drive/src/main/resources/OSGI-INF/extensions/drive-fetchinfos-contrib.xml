@@ -5,8 +5,12 @@
 	
 	<extension target="fr.toutatice.ecm.platform.core.services.infos.provider"
     	point="extended_fetch_infos">
-    	
     	<fetchInfos name="driveInfosProvider" class="fr.toutatice.ecm.drive.services.DocumentDriveInfosProviderImpl" />
-    	
     </extension>
+    
+    <extension target="fr.toutatice.ecm.platform.core.services.infos.provider"
+        point="fetch_infos">
+        <fetchInfos name="driveEditInfosInfosProvider" class="fr.toutatice.ecm.drive.services.DriveEditInfosProvider" />
+    </extension>
+    
 </component>
