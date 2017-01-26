@@ -13,7 +13,7 @@
 
 	<properties>
 		<nuxeo.version>6.0-HF34</nuxeo.version>
-		<nuxeo.opentoutatice.version>3.4.0-SNAPSHOT</nuxeo.opentoutatice.version>
+		<nuxeo.opentoutatice.version>3.4.0-RC13</nuxeo.opentoutatice.version>
 		<nuxeo.cap.distribution.version>6.0</nuxeo.cap.distribution.version>
 	</properties>
 
