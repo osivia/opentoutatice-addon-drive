@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<component name="org.opentoutatice.core.cache.config">
+
+	<require>org.nuxeo.ecm.core.cache.config</require>
+
+	<extension target="org.nuxeo.ecm.core.cache.CacheService"
+		point="caches">
+
+		<cache name="ottc-token-cache" class="org.nuxeo.ecm.core.cache.InMemoryCacheImpl">
+			<ttl>${ottc.token.cache.ttl}</ttl>
+			<option name="maxSize">${nuxeo.cache.maxsize}</option>
+			<option name="concurrencyLevel">${nuxeo.cache.concurrencylevel}</option>
+		</cache>
+
+		<cache name="ottc-volatile-drive-token-cache" class="org.nuxeo.ecm.core.cache.InMemoryCacheImpl">
+			<ttl>${ottc.volatile.drive.token.cache.ttl}</ttl>
+			<option name="maxSize">${nuxeo.cache.maxsize}</option>
+			<option name="concurrencyLevel">${nuxeo.cache.concurrencylevel}</option>
+		</cache>
+
+	</extension>
+
+</component>
