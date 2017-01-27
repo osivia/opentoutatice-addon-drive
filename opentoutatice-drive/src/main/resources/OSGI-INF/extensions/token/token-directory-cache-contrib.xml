@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<component name="fr.toutatice.ecm.token.vocabulary">
+
+	<require>org.nuxeo.ecm.login.token.directory.contrib</require>
+
+	<extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory"
+		point="directories">
+
+		<directory name="authTokens">
+			<createTablePolicy>on_missing_columns</createTablePolicy>
+			<cacheEntryName>ottc-token-cache</cacheEntryName>
+		</directory>
+
+	</extension>
+</component>

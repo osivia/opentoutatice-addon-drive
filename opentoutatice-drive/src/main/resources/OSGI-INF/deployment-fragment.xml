@@ -19,8 +19,24 @@
 		
 	</extension>
 	
-	<extension target="pages#PAGES">
-	</extension>
+	 <extension target="web#SERVLET">
+
+        <filter>
+            <display-name>DriveTokenFilter</display-name>
+            <filter-name>DriveTokenFilter</filter-name>
+            <filter-class>
+                fr.toutatice.ecm.drive.filter.DriveTokenFilter
+            </filter-class>
+        </filter>
+        
+        <filter-mapping>
+            <filter-name>DriveTokenFilter</filter-name>
+            <url-pattern>/site/automation/*</url-pattern>
+            <dispatcher>REQUEST</dispatcher>
+            <dispatcher>FORWARD</dispatcher>
+        </filter-mapping>
+    
+    </extension>
 	 
 	<install>
 		<unzip from="${bundle.fileName}" to="/">

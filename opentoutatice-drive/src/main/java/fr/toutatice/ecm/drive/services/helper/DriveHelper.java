@@ -27,6 +27,24 @@ public class DriveHelper {
     /** NxDrive protocol edit command. */
     public static final String PROTOCOL_COMMAND_EDIT = "edit";
     
+    /** NxDrive "volatile" tokens cache. */
+    public static final String NX_DRIVE_VOLATILE_TOKEN_CAHE = "ottc-volatile-drive-token-cache";
+    /** NxDrive token cache key prefix. */
+    public static final String NX_DRIVE_TOKEN_CACHE_KEY = "Nx-Drive-T-";
+    
+    /** Token directory. */
+    public static final String AUTH_TOKEN_DIRECTORY_NAME = "authTokens";
+    /** Token directory schema. */
+    public static final String AUTH_TOKEN_DIRECTORY_SCHEMA = "authtoken";
+    /** Token userName field. */
+    public static final String USERNAME_FIELD = "userName";
+    /** Token token field. */
+    public static final String TOKEN_FIELD = "token";
+    /** Token applicationName field. */
+    public static final String APPLICATION_NAME_FIELD = "applicationName";
+    /** Token deviceId field. */
+    public static final String DEVICE_ID_FIELD = "deviceId";
+    
     /** Logger. */
     private static final Log log = LogFactory.getLog(DriveHelper.class);
 

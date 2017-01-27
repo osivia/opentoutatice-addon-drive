@@ -7,5 +7,6 @@ Bundle-Localization: plugin
 Bundle-Vendor: Open Toutatice 
 Bundle-Category: stateful
 Nuxeo-Component: OSGI-INF/extensions/drive-fetchinfos-contrib.xml,
- OSGI-INF/extensions/drive-listeners-contrib.xml
+ OSGI-INF/extensions/drive-listeners-contrib.xml,
+ OSGI-INF/extensions/token/token-directory-cache-contrib.xml
  
