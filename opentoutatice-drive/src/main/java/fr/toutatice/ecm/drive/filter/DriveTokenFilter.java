@@ -49,6 +49,8 @@ public class DriveTokenFilter implements Filter {
         }
 
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
+        // TokenLoginName
+        String tokenLoginName = null;
         
         // Token cache
         CacheService cs = (CacheService) Framework.getService(CacheService.class);
@@ -60,9 +62,9 @@ public class DriveTokenFilter implements Filter {
             String app = httpRequest.getHeader("x-application-name");
             if ("Nuxeo Drive".equals(app)) {
                 // Drive user
-                String tokenLoginName = httpRequest.getHeader("x-user-id");
+                tokenLoginName = httpRequest.getHeader("x-user-id");
                 if (StringUtils.isNotBlank(tokenLoginName)) {
-                    // Set token and devicId in cache for user
+                    // Set token and deviceId in cache for user
                     String keyCache = DriveHelper.NX_DRIVE_TOKEN_CACHE_KEY + tokenLoginName;
                     
                     String[] tokenInfos = {httpRequest.getHeader("x-authentication-token"), httpRequest.getHeader("x-device-id")};
@@ -75,6 +77,7 @@ public class DriveTokenFilter implements Filter {
 
         // Continue
         chain.doFilter(request, response);
+        
     }
 
     @Override

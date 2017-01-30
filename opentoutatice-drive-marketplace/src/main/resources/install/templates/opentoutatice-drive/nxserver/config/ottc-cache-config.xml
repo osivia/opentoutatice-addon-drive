@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<component name="org.opentoutatice.core.cache.config">
+<component name="org.opentoutatice.drive.token.cache">
 
 	<require>org.nuxeo.ecm.core.cache.config</require>
 

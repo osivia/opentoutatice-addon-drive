@@ -1,4 +1,4 @@
-opentoutatice.target=.
+opentoutatice-drive.target=.
 
 ##----------------------------------------------------------------------------
 ## Drive Authentication Tokens cache
