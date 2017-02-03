@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<description>Addon to enable drive edition and synchronization through portal</description>
 	<name>opentoutatice-ecm.drive-parent</name>
-	<version>3.4.0</version>
+	<version>3.4-SNAPSHOT</version>
 
 	<properties>
 		<nuxeo.version>6.0-HF34</nuxeo.version>
@@ -83,7 +83,7 @@
 	</build>
 
 	<scm>
-		<developerConnection>scm:svn:http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/tags/3.4.0</developerConnection>
+		<developerConnection>scm:svn:http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/trunk</developerConnection>
 	</scm>
 
 	<distributionManagement>
