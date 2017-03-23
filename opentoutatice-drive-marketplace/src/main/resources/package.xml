@@ -25,7 +25,7 @@
 	</platforms>
 	<dependencies>
 		<!-- Dependance sur la plate-forme opentoutatice -->
-		<!-- <package>open-toutatice:3.4.0-SNAPSHOT</package> -->
+		<package>open-toutatice:3.4.0</package> 
 		<!-- Dépendance sur d'autres addons  -->
 		<!-- <package>nuxeo-drive:1.4.4:1.4.4</package> -->
 	</dependencies>
