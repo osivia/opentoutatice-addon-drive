@@ -7,5 +7,11 @@ opentoutatice-drive.target=.
 ottc.token.cache.ttl=10
 ottc.volatile.drive.token.cache.ttl=1
 
+##----------------------------------------------------------------------------
+## Drive synchronization (Portal informations)
+##----------------------------------------------------------------------------
+
+#ottc.portal.drive.sync.enabled=false
+
 
 
