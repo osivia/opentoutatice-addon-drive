@@ -45,7 +45,9 @@ import org.nuxeo.runtime.api.Framework;
  */
 public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvider {
 
-	private static final Log log = LogFactory.getLog("Drive");
+    private static final Log log = LogFactory.getLog(DocumentDriveInfosProviderImpl.class);
+    
+    public static final String OTTC_PORTAL_DRIVE_SYNC_ENABLED = "ottc.portal.drive.sync.enabled";
 
     protected static final String IS_UNDER_SYNCHRONIZATION_ROOT = "nuxeoDriveIsUnderSynchronizationRoot";
 
@@ -54,19 +56,27 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
 
     @Override
 	public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+        // For Trace logs
+        long begin = System.currentTimeMillis();
+        
         Map<String, Object> synchronizationInfos = new TreeMap<String, Object>();
 
-        if (canSynchronizeCurrentDocument(coreSession, currentDocument)) {
-            synchronizationInfos.put(CAN_SYNCHRONIZE, "true");
-        } else if (canUnSynchronizeCurrentDocument(coreSession, currentDocument)) {
-            synchronizationInfos.put(CAN_UNSYNCHRONIZE, "true");
-        } else if (canNavigateToCurrentSynchronizationRoot(coreSession, currentDocument)) {
-
-            synchronizationInfos.put(CAN_NAVIGATE_TO_CURRENT_SYNCHRONIZATION_ROOT, "true");
-            synchronizationInfos.put(SYNCHRONIZATION_ROOT_PATH, getCurrentSynchronizationRoot(coreSession, currentDocument).getPathAsString());
-
-
-        } 
+        // Controlled by configuration
+        if(Framework.isBooleanPropertyTrue(OTTC_PORTAL_DRIVE_SYNC_ENABLED)){
+            if (canSynchronizeCurrentDocument(coreSession, currentDocument)) {
+                synchronizationInfos.put(CAN_SYNCHRONIZE, "true");
+            } else if (canUnSynchronizeCurrentDocument(coreSession, currentDocument)) {
+                synchronizationInfos.put(CAN_UNSYNCHRONIZE, "true");
+            } else if (canNavigateToCurrentSynchronizationRoot(coreSession, currentDocument)) {
+                synchronizationInfos.put(CAN_NAVIGATE_TO_CURRENT_SYNCHRONIZATION_ROOT, "true");
+                synchronizationInfos.put(SYNCHRONIZATION_ROOT_PATH, getCurrentSynchronizationRoot(coreSession, currentDocument).getPathAsString());
+            } 
+        }
+        
+        if(log.isTraceEnabled()){
+            long end = System.currentTimeMillis();
+            log.trace(": " + String.valueOf(end - begin) + " ms");
+        }
         
         return synchronizationInfos;
     }

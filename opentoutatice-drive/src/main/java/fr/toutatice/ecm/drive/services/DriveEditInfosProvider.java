@@ -74,35 +74,38 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
 
         // Document can be used by Drive
         boolean isAvailableDoc = currentDocument != null && !currentDocument.isFolder() && DriveHelper.getFileSystemItem(currentDocument) != null;
-        // Current user has Read permission
-        boolean canWrite = coreSession.hasPermission(currentDocument.getRef(), SecurityConstants.WRITE);
-
+        
         // Current user has token (identifying its device(s))
         // (Note: NDrive can not be turned on ...)
         long begin = System.currentTimeMillis();
         
-        // Cached token
-        String[] tokenInfos = getTokenInfos(userName);
-        
-        // Drive is running
-        boolean driveRunning = tokenInfos != null;
-
-        // If ok, return URL
-        if (isAvailableDoc && canWrite && driveRunning) {
-            infos.put(DRIVE_EDIT_URL, DriveHelper.getDriveEditURL(coreSession, currentDocument));
-        }
-
-        // Not running, check if user has been connected once
-        if (!driveRunning) {
-            DocumentModelList tokensOfUser = getTokenAuthService().getTokenBindings(userName);
-            boolean driveEnabled = tokensOfUser != null && tokensOfUser.size() > 0;
+        if(isAvailableDoc){
+            // Current user has Read permission
+            boolean canWrite = coreSession.hasPermission(currentDocument.getRef(), SecurityConstants.WRITE);
+    
+            // Cached token
+            String[] tokenInfos = getTokenInfos(userName);
             
-            infos.put(DRIVE_ENABLED, driveEnabled);
+            // Drive is running
+            boolean driveRunning = tokenInfos != null;
+    
+            // If ok, return URL
+            if (canWrite && driveRunning) {
+                infos.put(DRIVE_EDIT_URL, DriveHelper.getDriveEditURL(coreSession, currentDocument));
+            }
+    
+            // Not running, check if user has been connected once
+            if (!driveRunning) {
+                DocumentModelList tokensOfUser = getTokenAuthService().getTokenBindings(userName);
+                boolean driveEnabled = tokensOfUser != null && tokensOfUser.size() > 0;
+                
+                infos.put(DRIVE_ENABLED, driveEnabled);
+            }
         }
 
-        if (log.isDebugEnabled()) {
+        if (log.isTraceEnabled()) {
             long time = System.currentTimeMillis() - begin;
-            log.debug("[FetchInfos - DriveEdit]: " + time + " ms");
+            log.trace(": " + time + " ms");
         }
 
         return infos;
