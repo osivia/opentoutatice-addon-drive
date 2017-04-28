@@ -4,7 +4,7 @@ opentoutatice-drive.target=.
 ## Drive Authentication Tokens cache
 ##----------------------------------------------------------------------------
 
-ottc.token.cache.ttl=10
+ottc.token.cache.ttl=500
 ottc.volatile.drive.token.cache.ttl=1
 
 ##----------------------------------------------------------------------------

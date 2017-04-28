@@ -79,7 +79,12 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
         // (Note: NDrive can not be turned on ...)
         long begin = System.currentTimeMillis();
         
-        if(isAvailableDoc){
+        DocumentModelList tokensOfUser = getTokenAuthService().getTokenBindings(userName);
+        boolean driveEnabled = tokensOfUser != null && tokensOfUser.size() > 0;
+
+        infos.put(DRIVE_ENABLED, driveEnabled);
+
+        if (driveEnabled && isAvailableDoc) {
             // Current user has Read permission
             boolean canWrite = coreSession.hasPermission(currentDocument.getRef(), SecurityConstants.WRITE);
     
@@ -92,14 +97,6 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
             // If ok, return URL
             if (canWrite && driveRunning) {
                 infos.put(DRIVE_EDIT_URL, DriveHelper.getDriveEditURL(coreSession, currentDocument));
-            }
-    
-            // Not running, check if user has been connected once
-            if (!driveRunning) {
-                DocumentModelList tokensOfUser = getTokenAuthService().getTokenBindings(userName);
-                boolean driveEnabled = tokensOfUser != null && tokensOfUser.size() > 0;
-                
-                infos.put(DRIVE_ENABLED, driveEnabled);
             }
         }
 
