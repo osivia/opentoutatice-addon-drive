@@ -22,7 +22,11 @@ import org.nuxeo.runtime.api.Framework;
  */
 public class DriveHelper {
     
-    /** NxDrive protocol. */
+    /**
+	 * Used to replace the host by current request host
+	 */
+	private static final String HOST_JOKER = "__HOST__";
+	/** NxDrive protocol. */
     public static final String NXDRIVE_PROTOCOL = "nxdrive";
     /** NxDrive protocol edit command. */
     public static final String PROTOCOL_COMMAND_EDIT = "edit";
@@ -112,7 +116,9 @@ public class DriveHelper {
         StringBuffer sb = new StringBuffer();
         sb.append(NXDRIVE_PROTOCOL).append("://");
         sb.append(PROTOCOL_COMMAND_EDIT).append("/");
-        sb.append(Framework.getProperty("nuxeo.url").replaceFirst("://", "/"));
+        
+        // #1421 - no host in nxdrive url (get the current portal request host)
+        sb.append(HOST_JOKER);
         sb.append("/repo/");
         sb.append(coreSession.getRepositoryName());
         sb.append("/nxdocid/");
