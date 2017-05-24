@@ -25,9 +25,9 @@
 	</platforms>
 	<dependencies>
 		<!-- Dependance sur la plate-forme opentoutatice -->
-		<package>open-toutatice:3.4.0</package> 
+		<package>open-toutatice:@OTTC_VERSION@</package> 
 		<!-- Dépendance sur d'autres addons  -->
-		<package>nuxeo-drive:1.4.4:1.4.4</package> 
+		<package>nuxeo-drive:@NX_DRIVE_ADDON@:@NX_DRIVE_ADDON@</package> 
 	</dependencies>
 	<license>LGPL 2.1</license>
 	<license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>
