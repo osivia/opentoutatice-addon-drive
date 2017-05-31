@@ -21,13 +21,14 @@
 	<production-state>production_ready</production-state>
 	<supported>false</supported>
 	<platforms>
-		<platform>cap-@DISTRIB_VERSION@</platform>
+		<platform>cap-@CAP_DISTRIB_VERSION@</platform>
+		<platform>cap-@CAP_DISTRIB_VERSION@*</platform>
 	</platforms>
 	<dependencies>
 		<!-- Dependance sur la plate-forme opentoutatice -->
 		<package>open-toutatice:@OTTC_VERSION@</package> 
 		<!-- Dépendance sur d'autres addons  -->
-		<package>nuxeo-drive:@NX_DRIVE_ADDON@:@NX_DRIVE_ADDON@</package> 
+		<package>nuxeo-drive:@NUXEO_DRIVE_ADDON@:@NUXEO_DRIVE_ADDON@</package> 
 	</dependencies>
 	<license>LGPL 2.1</license>
 	<license-url>http://www.gnu.org/licenses/lgpl-2.1.html</license-url>

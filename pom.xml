@@ -12,9 +12,9 @@
 
 	<properties>
 		<nuxeo.version>6.0-HF37</nuxeo.version>
+		<nuxeo.cap.version>6.0</nuxeo.cap.version>
 		<nuxeo.opentoutatice.version>4.6-SNAPSHOT</nuxeo.opentoutatice.version>
 		<nuxeo.drive.version>1.4.8</nuxeo.drive.version>
-		<nuxeo.cap.distribution.version>6.0</nuxeo.cap.distribution.version>
 	</properties>
 
 	<modules>
@@ -27,7 +27,7 @@
             <dependency>
                 <groupId>org.nuxeo.ecm.distribution</groupId>
                 <artifactId>nuxeo-distribution-cap</artifactId>
-                <version>${nuxeo.cap.distribution.version}</version>
+                <version>${nuxeo.version}</version>
                 <type>pom</type>
             </dependency>
 		
