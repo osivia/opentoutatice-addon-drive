@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<component name="ottc.authentification.contrib">
+
+	<require>org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService
+	</require>
+	<require>org.nuxeo.ecm.platform.ui.web.auth.defaultConfig</require>
+	<require>org.nuxeo.ecm.platform.login.Portal</require>
+	<require>org.nuxeo.ecm.platform.login.Cas2SSO</require>
+	<require>org.nuxeo.ecm.automation.server.auth.config</require>
+
+	<extension
+		target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService"
+		point="authenticators">
+		<authenticationPlugin name="PORTAL_AUTH">
+			<loginModulePlugin>Trusting_LM</loginModulePlugin>
+			<stateful>true</stateful>
+			<parameters>
+				<parameter name="secret">${nuxeo.auth.secret.key}</parameter>
+				<parameter name="maxAge">${nuxeo.auth.max.age}</parameter>
+			</parameters>
+		</authenticationPlugin>
+	</extension>
+
+	<!-- Include Portal SSO and Token (for Drive) Auth into authentication chain -->
+	<extension
+		target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService"
+		point="specificChains">
+
+		<specificAuthenticationChain name="Automation">
+			<urlPatterns>
+				<url>(.*)/automation.*</url>
+			</urlPatterns>
+
+			<replacementChain>
+				<plugin>AUTOMATION_BASIC_AUTH</plugin>
+				<plugin>PORTAL_AUTH</plugin>
+				<plugin>TOKEN_AUTH</plugin>
+				<plugin>ANONYMOUS_AUTH</plugin>
+			</replacementChain>
+		</specificAuthenticationChain>
+	</extension>
+
+</component>
