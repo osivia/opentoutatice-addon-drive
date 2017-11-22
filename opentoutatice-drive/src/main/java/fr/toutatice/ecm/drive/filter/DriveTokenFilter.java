@@ -32,6 +32,17 @@ public class DriveTokenFilter implements Filter {
     /** Logger. */
     private static final Log log = LogFactory.getLog(DriveTokenFilter.class);
 
+    /** Cache service. */
+    private static CacheService cs;
+
+    /** Getter for Cache service. */
+    private static CacheService getCacheService() {
+        if (cs == null) {
+            cs = (CacheService) Framework.getService(CacheService.class);
+        }
+        return cs;
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // Nothing
@@ -43,7 +54,7 @@ public class DriveTokenFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // Continue if not HttpServletRequest
-        if (request instanceof HttpServletRequest == false) {
+        if (!(request instanceof HttpServletRequest)) {
             chain.doFilter(request, response);
             return;
         }
@@ -53,8 +64,7 @@ public class DriveTokenFilter implements Filter {
         String tokenLoginName = null;
         
         // Token cache
-        CacheService cs = (CacheService) Framework.getService(CacheService.class);
-        CacheAttributesChecker tokensCache = cs.getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
+        CacheAttributesChecker tokensCache = getCacheService().getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
 
         // Token authentification
         if (StringUtils.isNotBlank(httpRequest.getHeader("x-authentication-token"))) {
@@ -68,7 +78,10 @@ public class DriveTokenFilter implements Filter {
                     String keyCache = DriveHelper.NX_DRIVE_TOKEN_CACHE_KEY + tokenLoginName;
                     
                     String[] tokenInfos = {httpRequest.getHeader("x-authentication-token"), httpRequest.getHeader("x-device-id")};
+                    // Check if yet present
+                    if (!tokensCache.hasEntry(keyCache)) {
                     tokensCache.put(keyCache, tokenInfos);
+                    }
                     
                 }
             }

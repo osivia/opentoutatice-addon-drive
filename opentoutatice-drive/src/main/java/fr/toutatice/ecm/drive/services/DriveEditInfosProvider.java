@@ -51,6 +51,9 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
     /** TokenAuthenticationService. */
     private static TokenAuthenticationService tokenAuthService;
 
+    /** Cache service. */
+    private static CacheService cs;
+
     /**
      * Getter for TokenAuthenticationService.
      */
@@ -59,6 +62,14 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
             tokenAuthService = (TokenAuthenticationService) Framework.getService(TokenAuthenticationService.class);
         }
         return tokenAuthService;
+    }
+
+    /** Getter for Cache service. */
+    private static CacheService getCacheService() {
+        if (cs == null) {
+            cs = (CacheService) Framework.getService(CacheService.class);
+        }
+        return cs;
     }
 
     /**
@@ -85,7 +96,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
         infos.put(DRIVE_ENABLED, driveEnabled);
 
         if (driveEnabled && isAvailableDoc) {
-            // Current user has Read permission
+            // Current user has Write permission
             boolean canWrite = coreSession.hasPermission(currentDocument.getRef(), SecurityConstants.WRITE);
     
             // Cached token
@@ -118,8 +129,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
         // Token infos
         String[] tokenInfos = null;
         
-        CacheService cs = (CacheService) Framework.getService(CacheService.class);
-        CacheAttributesChecker tokensCache = cs.getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
+        CacheAttributesChecker tokensCache = getCacheService().getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
 
         String keyCache = DriveHelper.NX_DRIVE_TOKEN_CACHE_KEY + userName;
 
