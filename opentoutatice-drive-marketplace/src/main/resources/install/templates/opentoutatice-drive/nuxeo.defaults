@@ -13,5 +13,8 @@ ottc.volatile.drive.token.cache.ttl=1
 
 #ottc.portal.drive.sync.enabled=false
 
-
+##----------------------------------------------------------------------------
+## Use of this ottc-auth-config.xml.nxftl
+##----------------------------------------------------------------------------
+nuxeo.need.ottc.drive.auth.contrib=true
 

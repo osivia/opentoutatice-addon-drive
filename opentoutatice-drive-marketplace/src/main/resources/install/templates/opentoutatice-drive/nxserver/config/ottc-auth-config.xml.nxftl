@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
+
 <component name="ottc.authentification.contrib">
+
+<#if "${nuxeo.need.ottc.drive.auth.contrib}" == "true">
 
 	<require>org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService
 	</require>
@@ -39,5 +42,7 @@
 			</replacementChain>
 		</specificAuthenticationChain>
 	</extension>
+	
+</#if>
 
 </component>
