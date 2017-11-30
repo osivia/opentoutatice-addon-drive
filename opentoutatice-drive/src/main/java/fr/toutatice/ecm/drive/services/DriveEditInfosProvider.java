@@ -3,7 +3,6 @@
  */
 package fr.toutatice.ecm.drive.services;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.security.SecurityConstants;
-import org.nuxeo.ecm.core.cache.CacheAttributesChecker;
+import org.nuxeo.ecm.core.cache.Cache;
 import org.nuxeo.ecm.core.cache.CacheService;
 import org.nuxeo.ecm.directory.Session;
 import org.nuxeo.ecm.directory.api.DirectoryService;
@@ -59,7 +58,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
      */
     protected static TokenAuthenticationService getTokenAuthService() {
         if (tokenAuthService == null) {
-            tokenAuthService = (TokenAuthenticationService) Framework.getService(TokenAuthenticationService.class);
+            tokenAuthService = Framework.getService(TokenAuthenticationService.class);
         }
         return tokenAuthService;
     }
@@ -67,7 +66,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
     /** Getter for Cache service. */
     private static CacheService getCacheService() {
         if (cs == null) {
-            cs = (CacheService) Framework.getService(CacheService.class);
+            cs = Framework.getService(CacheService.class);
         }
         return cs;
     }
@@ -79,17 +78,17 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
     public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
         // Drive editable infos
         Map<String, Object> infos = new HashMap<String, Object>(1);
-        
+
         // Current user
         String userName = coreSession.getPrincipal().getName();
 
         // Document can be used by Drive
         boolean isAvailableDoc = currentDocument != null && !currentDocument.isFolder() && DriveHelper.getFileSystemItem(currentDocument) != null;
-        
+
         // Current user has token (identifying its device(s))
         // (Note: NDrive can not be turned on ...)
         long begin = System.currentTimeMillis();
-        
+
         DocumentModelList tokensOfUser = getTokenAuthService().getTokenBindings(userName);
         boolean driveEnabled = tokensOfUser != null && tokensOfUser.size() > 0;
 
@@ -98,13 +97,13 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
         if (driveEnabled && isAvailableDoc) {
             // Current user has Write permission
             boolean canWrite = coreSession.hasPermission(currentDocument.getRef(), SecurityConstants.WRITE);
-    
+
             // Cached token
             String[] tokenInfos = getTokenInfos(userName);
-            
+
             // Drive is running
             boolean driveRunning = tokenInfos != null;
-    
+
             // If ok, return URL
             if (canWrite && driveRunning) {
                 infos.put(DRIVE_EDIT_URL, DriveHelper.getDriveEditURL(coreSession, currentDocument));
@@ -118,29 +117,19 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
 
         return infos;
     }
-    
+
     /**
      * Get token informations of user.
      * 
      * @param userName
      * @return tokenInfos
-     */ 
-    public String[] getTokenInfos(String userName){
-        // Token infos
-        String[] tokenInfos = null;
-        
-        CacheAttributesChecker tokensCache = getCacheService().getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
+     */
+    public String[] getTokenInfos(String userName) {
 
+        Cache tokensCache = getCacheService().getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
         String keyCache = DriveHelper.NX_DRIVE_TOKEN_CACHE_KEY + userName;
 
-        try {
-            tokenInfos = (String[]) tokensCache.get(keyCache);
-
-        } catch (IOException e) {
-            // Nothing
-        }
-        
-        return tokenInfos;
+        return (String[]) tokensCache.get(keyCache);
     }
 
     /**

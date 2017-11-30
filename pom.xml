@@ -8,28 +8,28 @@
 	<packaging>pom</packaging>
 	<description>Addon to enable drive edition and synchronization through portal</description>
 	<name>opentoutatice-ecm.drive-parent</name>
-	<version>4.6.2</version>
+	<version>5.0-SNAPSHOT</version>
 
 	<properties>
-		<nuxeo.version>6.0-HF42</nuxeo.version>
-		<nuxeo.cap.version>6.0</nuxeo.cap.version>
-		<nuxeo.opentoutatice.version>4.6</nuxeo.opentoutatice.version>
-		<nuxeo.drive.version>1.4.8</nuxeo.drive.version>
+		<nuxeo.version>8.10-HF17</nuxeo.version>
+		<!-- <nuxeo.cap.version>6.0</nuxeo.cap.version> -->
+		<nuxeo.opentoutatice.version>5.0-SNAPSHOT</nuxeo.opentoutatice.version>
+		<nuxeo.drive.version>1.6.6</nuxeo.drive.version>
 	</properties>
 
 	<modules>
 		<module>opentoutatice-drive</module>
-		<module>opentoutatice-drive-marketplace</module>
+		<!-- <module>opentoutatice-drive-marketplace</module> -->
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
-            <dependency>
+            <!-- <dependency>
                 <groupId>org.nuxeo.ecm.distribution</groupId>
                 <artifactId>nuxeo-distribution-cap</artifactId>
                 <version>${nuxeo.version}</version>
                 <type>pom</type>
-            </dependency>
+            </dependency> -->
 		
 			<dependency>
 				<groupId>opentoutatice-ecm.platform</groupId>
@@ -84,7 +84,7 @@
 	</build>
 
 	<scm>
-		<developerConnection>scm:svn:http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/tags/4.6.2</developerConnection>
+		<developerConnection>scm:svn:http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/branches/8.10-migration</developerConnection>
 	</scm>
 
 	<distributionManagement>

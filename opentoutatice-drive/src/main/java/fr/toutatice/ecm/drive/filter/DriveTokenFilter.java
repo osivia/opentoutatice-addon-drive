@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.cache.CacheAttributesChecker;
+import org.nuxeo.ecm.core.cache.Cache;
 import org.nuxeo.ecm.core.cache.CacheService;
 import org.nuxeo.runtime.api.Framework;
 
@@ -38,7 +38,7 @@ public class DriveTokenFilter implements Filter {
     /** Getter for Cache service. */
     private static CacheService getCacheService() {
         if (cs == null) {
-            cs = (CacheService) Framework.getService(CacheService.class);
+            cs = Framework.getService(CacheService.class);
         }
         return cs;
     }
@@ -62,9 +62,9 @@ public class DriveTokenFilter implements Filter {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         // TokenLoginName
         String tokenLoginName = null;
-        
+
         // Token cache
-        CacheAttributesChecker tokensCache = getCacheService().getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
+        Cache tokensCache = getCacheService().getCache(DriveHelper.NX_DRIVE_VOLATILE_TOKEN_CAHE);
 
         // Token authentification
         if (StringUtils.isNotBlank(httpRequest.getHeader("x-authentication-token"))) {
@@ -76,13 +76,13 @@ public class DriveTokenFilter implements Filter {
                 if (StringUtils.isNotBlank(tokenLoginName)) {
                     // Set token and deviceId in cache for user
                     String keyCache = DriveHelper.NX_DRIVE_TOKEN_CACHE_KEY + tokenLoginName;
-                    
+
                     String[] tokenInfos = {httpRequest.getHeader("x-authentication-token"), httpRequest.getHeader("x-device-id")};
                     // Check if yet present
                     if (!tokensCache.hasEntry(keyCache)) {
-                    tokensCache.put(keyCache, tokenInfos);
+                        tokensCache.put(keyCache, tokenInfos);
                     }
-                    
+
                 }
             }
 
@@ -90,7 +90,7 @@ public class DriveTokenFilter implements Filter {
 
         // Continue
         chain.doFilter(request, response);
-        
+
     }
 
     @Override
