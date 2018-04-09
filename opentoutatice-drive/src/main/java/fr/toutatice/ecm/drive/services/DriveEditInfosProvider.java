@@ -13,7 +13,7 @@ import javax.security.auth.login.LoginException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -75,7 +75,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
      * Checks if document can be drive editable.
      */
     @Override
-    public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
         // Drive editable infos
         Map<String, Object> infos = new HashMap<String, Object>(1);
 
@@ -178,7 +178,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
         try {
             lc = Framework.login();
         } catch (LoginException e) {
-            throw new ClientException("Cannot log in as system user", e);
+            throw new NuxeoException("Cannot log in as system user", e);
         }
         try {
             final Session session = Framework.getService(DirectoryService.class).open(DriveHelper.AUTH_TOKEN_DIRECTORY_NAME);
@@ -200,7 +200,7 @@ public class DriveEditInfosProvider implements DocumentInformationsProvider {
                     lc.logout();
                 }
             } catch (LoginException e) {
-                throw new ClientException("Cannot log out system user", e);
+                throw new NuxeoException("Cannot log out system user", e);
             }
         }
 

@@ -9,7 +9,7 @@ import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.drive.adapter.FileSystemItem;
 import org.nuxeo.drive.service.FileSystemItemAdapterService;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
@@ -64,9 +64,9 @@ public class DriveHelper {
      * 
      * @param doc
      * @return fileSystemItem
-     * @throws ClientException
+     * @throws NuxeoException
      */
-    public static FileSystemItem getFileSystemItem(DocumentModel doc) throws ClientException {
+    public static FileSystemItem getFileSystemItem(DocumentModel doc) throws NuxeoException {
         // Force parentItem to null to avoid computing ancestors
         // NXP-19442: Avoid useless and costly call to DocumentModel#getLockInfo
         FileSystemItem fileSystemItem = Framework.getLocalService(FileSystemItemAdapterService.class).getFileSystemItem(
@@ -85,16 +85,16 @@ public class DriveHelper {
      * configured on the client side (either on the browser, or on the OS).
      * 
      * @return Drive edit URL in the form "{@link #NXDRIVE_PROTOCOL}:// {@link #PROTOCOL_COMMAND_EDIT} /protocol/server[:port]/webappName/nxdoc/repoName/docRef"
-     * @throws ClientException
+     * @throws NuxeoException
      * 
      */
-    public static String getDriveEditURL(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    public static String getDriveEditURL(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
 
         FileSystemItem currentFileSystemItem = getFileSystemItem(currentDocument);
 
         // Current document must be adaptable as a FileSystemItem
         if (currentFileSystemItem == null) {
-            throw new ClientException(String.format(
+            throw new NuxeoException(String.format(
                     "Document %s (%s) is not adaptable as a FileSystemItem thus not Drive editable, \"driveEdit\" action should not be displayed.",
                     currentDocument.getId(), currentDocument.getPathAsString()));
         }
@@ -103,12 +103,12 @@ public class DriveHelper {
         
         BlobHolder bh = currentDocument.getAdapter(BlobHolder.class);
         if (bh == null) {
-            throw new ClientException(String.format("Document %s (%s) is not a BlobHolder, cannot get Drive Edit URL.",
+            throw new NuxeoException(String.format("Document %s (%s) is not a BlobHolder, cannot get Drive Edit URL.",
                     currentDocument.getPathAsString(), currentDocument.getId()));
         }
         Blob blob = bh.getBlob();
         if (blob == null) {
-            throw new ClientException(String.format("Document %s (%s) has no blob, cannot get Drive Edit URL.",
+            throw new NuxeoException(String.format("Document %s (%s) has no blob, cannot get Drive Edit URL.",
                     currentDocument.getPathAsString(), currentDocument.getId()));
         }
         String fileName = blob.getFilename();
