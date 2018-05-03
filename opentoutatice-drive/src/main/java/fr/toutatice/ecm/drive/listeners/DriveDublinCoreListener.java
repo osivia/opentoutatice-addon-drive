@@ -4,7 +4,7 @@
 package fr.toutatice.ecm.drive.listeners;
 
 import org.nuxeo.drive.service.impl.NuxeoDriveManagerImpl;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
 import org.nuxeo.ecm.core.api.model.Property;
@@ -22,7 +22,7 @@ public class DriveDublinCoreListener extends DublinCoreListener {
 	 * To manage correct lastContributor on synchronization.
 	 */
 	@Override
-    public void handleEvent(Event event) throws ClientException {
+    public void handleEvent(Event event) throws NuxeoException {
 		String eventName = event.getName();
 		DocumentModel sourceDocument = null;
 		if (event.getContext() instanceof DocumentEventContext) {

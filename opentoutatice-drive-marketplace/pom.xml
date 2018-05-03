@@ -12,13 +12,13 @@
 	<packaging>zip</packaging>
 	<name>Marketplace package - openToutatice Drive</name>
 
-	<dependencies>
+	<!-- <dependencies>
         <dependency>
             <groupId>org.nuxeo.ecm.distribution</groupId>
             <artifactId>nuxeo-distribution-cap</artifactId>
             <type>pom</type>
         </dependency>
-    </dependencies>
+    </dependencies> -->
 
 	<build>
 		<plugins>

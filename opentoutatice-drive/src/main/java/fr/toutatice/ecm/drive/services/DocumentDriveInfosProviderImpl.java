@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.drive.service.NuxeoDriveManager;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -55,7 +55,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
 
 
     @Override
-	public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+	public Map<String, Object> fetchInfos(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
         // For Trace logs
         long begin = System.currentTimeMillis();
         
@@ -83,7 +83,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
 
 
 
-	protected DocumentModelList getCurrentPath(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+	protected DocumentModelList getCurrentPath(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
         DocumentModelList parentDocsList = new DocumentModelListImpl();
 
         List<DocumentModel> fromRoot = coreSession.getParentDocuments(currentDocument.getRef());
@@ -95,7 +95,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
     }
 
 
-    public DocumentModel getCurrentSynchronizationRoot(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    public DocumentModel getCurrentSynchronizationRoot(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
         NuxeoDriveManager driveManager = Framework.getLocalService(NuxeoDriveManager.class);
         Set<IdRef> references = driveManager.getSynchronizationRootReferences(coreSession);
         DocumentModelList path = getCurrentPath(coreSession, currentDocument);
@@ -113,7 +113,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
     }
 
 
-    public boolean canSynchronizeCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    public boolean canSynchronizeCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
 
         if (currentDocument == null) {
             return false;
@@ -121,7 +121,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
         return isSyncRootCandidate(coreSession, currentDocument) && getCurrentSynchronizationRoot(coreSession, currentDocument) == null;
     }
 
-    public boolean canUnSynchronizeCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    public boolean canUnSynchronizeCurrentDocument(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
 
         if (currentDocument == null) {
             return false;
@@ -137,7 +137,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
         return currentDocRef.equals(currentSyncRoot.getRef());
     }
 
-    public boolean canNavigateToCurrentSynchronizationRoot(CoreSession coreSession, DocumentModel currentDocument) throws ClientException {
+    public boolean canNavigateToCurrentSynchronizationRoot(CoreSession coreSession, DocumentModel currentDocument) throws NuxeoException {
 
         if (currentDocument == null) {
             return false;
@@ -153,7 +153,7 @@ public class DocumentDriveInfosProviderImpl implements DocumentDriveInfosProvide
         return !currentDocRef.equals(currentSyncRoot.getRef());
     }
 
-    protected boolean isSyncRootCandidate(CoreSession coreSession, DocumentModel doc) throws ClientException {
+    protected boolean isSyncRootCandidate(CoreSession coreSession, DocumentModel doc) throws NuxeoException {
         if (!doc.isFolder()) {
             return false;
         }
