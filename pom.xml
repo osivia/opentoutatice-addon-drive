@@ -11,7 +11,7 @@
 	<version>4.7-SNAPSHOT</version>
 
 	<properties>
-		<nuxeo.version>6.1.0</nuxeo.version>
+		<nuxeo.version>6.1.1</nuxeo.version>
 		<!-- <nuxeo.cap.version>6.0</nuxeo.cap.version> -->
 		<opentoutatice.version>4.7.17</opentoutatice.version>
 		<nuxeo.drive.version>6.1.0</nuxeo.drive.version>
