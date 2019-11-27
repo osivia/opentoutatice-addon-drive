@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>opentoutatice-ecm.drive</groupId>
 		<artifactId>opentoutatice-ecm.drive-parent</artifactId>
-		<version>4.4</version>
+		<version>4.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>opentoutatice-drive</artifactId>
@@ -35,17 +35,6 @@
 							<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
 						</manifestEntries>
 					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.1</version>
-				<configuration>
-					<tagBase>http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/tags</tagBase>
-					<releaseProfiles>unpack,pack</releaseProfiles>
-					<preparationGoals>clean install</preparationGoals>
-					<goals>deploy</goals>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -8,17 +8,18 @@
 	<packaging>pom</packaging>
 	<description>Addon to enable drive edition and synchronization through portal</description>
 	<name>opentoutatice-ecm.drive-parent</name>
-	<version>4.4</version>
+	<version>4.4-SNAPSHOT</version>
 
 	<properties>
-		<nuxeo.version>6.0-HF34</nuxeo.version>
-		<nuxeo.opentoutatice.version>3.4.0</nuxeo.opentoutatice.version>
-		<nuxeo.cap.distribution.version>6.0</nuxeo.cap.distribution.version>
+		<nuxeo.version>6.1.1</nuxeo.version>
+		<!-- <nuxeo.cap.version>6.0</nuxeo.cap.version> -->
+		<opentoutatice.version>4.4.19.3</opentoutatice.version>
+		<nuxeo.drive.version>6.1.0</nuxeo.drive.version>
 	</properties>
 
 	<modules>
 		<module>opentoutatice-drive</module>
-		<module>opentoutatice-drive-marketplace</module>
+		<!-- <module>opentoutatice-drive-marketplace</module> -->
 	</modules>
 
 	<dependencyManagement>
@@ -26,14 +27,14 @@
             <dependency>
                 <groupId>org.nuxeo.ecm.distribution</groupId>
                 <artifactId>nuxeo-distribution-cap</artifactId>
-                <version>${nuxeo.cap.distribution.version}</version>
+                <version>${nuxeo.version}</version>
                 <type>pom</type>
             </dependency>
 		
 			<dependency>
 				<groupId>opentoutatice-ecm.platform</groupId>
 				<artifactId>opentoutatice-ecm-platform-core</artifactId>
-				<version>${nuxeo.opentoutatice.version}</version>
+				<version>${opentoutatice.version}</version>
 			</dependency>
 
 			<!-- Drive -->
@@ -62,12 +63,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.2.1</version>
-				<configuration>
-					<tagBase>http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/tags</tagBase>
-					<releaseProfiles>unpack,pack</releaseProfiles>
-					<preparationGoals>clean install</preparationGoals>
-					<goals>deploy</goals>
-				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -82,20 +77,24 @@
 		</pluginManagement>
 	</build>
 
-	<scm>
-		<developerConnection>scm:svn:http://projet.toutatice.fr/repos/toutatice-ecm/opentoutatice-addons/opentoutatice-drive/tags/4.4</developerConnection>
-	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>toutatice-releases</id>
-			<url>http://projet.toutatice.fr/nexus/content/repositories/toutatice-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>toutatice-snapshots</id>
-			<url>http://projet.toutatice.fr/nexus/content/repositories/toutatice-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <scm>
+        <url>https://github.com/osivia/opentoutatice-addon-drive</url>
+        <connection>scm:git:ssh://git@github.com/osivia/opentoutatice-addon-drive.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/osivia/opentoutatice-addon-drive.git</developerConnection>     
+        <tag>HEAD</tag> 
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>osivia-releases</id>
+            <url>http://www.osivia.org/nexus/content/repositories/osivia-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>osivia-snapshots</id>
+            <url>http://www.osivia.org/nexus/content/repositories/osivia-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
 
